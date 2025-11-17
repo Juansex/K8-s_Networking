@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-server
+  labels:
+    app: data-server
+    tier: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-server
+  template:
+    metadata:
+      labels:
+        app: data-server
+        tier: service
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox:latest
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo '<html><body><h1>Data Service Running</h1><p>Timestamp: '$(date)'</p></body></html>' | nc -l -p 8080; done"]
+        ports:
+        - containerPort: 8080
+          name: http
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
